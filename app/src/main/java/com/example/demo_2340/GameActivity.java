@@ -32,6 +32,7 @@ public class GameActivity extends AppCompatActivity {
     private int dotCount = 0;
     private double difficulty;
     private int dotsToWin;
+    private final int speed = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +81,42 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO logic to move the player (remember to check collisions)
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_W:
+                // TODO IMPLEMENT UP MOVEMENT
+                Log.d("MOVEMENT", "Moving up...");
+                playerY += speed;
+                playerView = new PlayerView(this, playerX, playerY, 100);
+                return true;
+            case KeyEvent.KEYCODE_S:
+                // TODO IMPLEMENT DOWN MOVEMENT
+                playerY -= speed;
+                playerView = new PlayerView(this, playerX, playerY, 100);
+                return true;
+            case KeyEvent.KEYCODE_D:
+                // TODO IMPLEMENT RIGHT MOVEMENT
+                playerX += speed;
+                playerView = new PlayerView(this, playerX, playerY, 100);
+                return true;
+            case KeyEvent.KEYCODE_A:
+                // TODO IMPLEMENT LEFT MOVEMENT
+                playerX -= speed;
+                playerView = new PlayerView(this, playerX, playerY, 100);
+                return true;
+            default:
+                return super.onKeyDown(keyCode, event); // Just to be safe, though I'm not sure what this does.
+        }
     }
 
     private void initializeDots() {
         // TODO Create and add dots with random positions
+        for (int i = 0; i < 20; i++) {
+            int x = random.nextInt();
+            int y = random.nextInt();
+            dots.add(new Dot(x, y, 50)); // radius is 5
+        }
+        dotCount = 20;
+        //int y = random.nextInt();
     }
 
     /*
@@ -100,11 +133,20 @@ public class GameActivity extends AppCompatActivity {
     // Maintains 20 dots on screen
     private void respawnDotsIfNeeded() {
         // TODO: if dots drop below 20, respawn dots
+        if (dotCount < 20) {
+            while (dotCount < 20) {
+                int x = random.nextInt();
+                int y = random.nextInt();
+                dots.add(new Dot(x, y, 50)); // ditto
+                dotCount++;
+            }
+        }
     }
 
     // Recreates the dots. Respawn mechanic
     private void respawnDot() {
         //TODO: randomly spawn a dot (need to make both UI and background class)
+        //Not sure what to do here.
     }
 
     /*
