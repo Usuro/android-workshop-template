@@ -109,6 +109,10 @@ public class GameActivity extends AppCompatActivity {
 
     private void initializeDots() {
         // TODO Create and add dots with random positions
+
+        /*
+         * Done
+         */
         for (int i = 0; i < 20; i++) {
             respawnDot();
         }
@@ -129,6 +133,10 @@ public class GameActivity extends AppCompatActivity {
     // Maintains 20 dots on screen
     private void respawnDotsIfNeeded() {
         // TODO: if dots drop below 20, respawn dots
+
+        /*
+         * Done.
+         */
         if (dots.size() < 20) {
             respawnDot();
         }
@@ -137,6 +145,10 @@ public class GameActivity extends AppCompatActivity {
     // Recreates the dots. Respawn mechanic
     private void respawnDot() {
         //TODO: randomly spawn a dot (need to make both UI and background class)
+
+        /* Should be finished, although there might
+         * be a way to optimize it.
+         */
         float x = random.nextFloat() * screenWidth;
         float y = random.nextFloat() * screenHeight;
         dots.add(new Dot(x, y, 50)); // ditto
@@ -161,7 +173,10 @@ public class GameActivity extends AppCompatActivity {
                     launchGameWinActivity();
                 }
             } else if (dot.isExpired()) { // TODO: Checks if dots have expired.
-                dots.remove(dot); // Test to see if this works.
+                /* This should be done. We need the game to remove
+                 * the dot from the screen and then remove it from
+                 * the array.
+                 */
                 gameLayout.removeView(dotViewMap.get(dot));
                 dots.remove(i);
             }
