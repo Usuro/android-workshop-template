@@ -32,7 +32,7 @@ public class GameActivity extends AppCompatActivity {
     private int dotCount = 0;
     private double difficulty;
     private int dotsToWin;
-    private final int speed = 5;
+    private final int speed = 25;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,26 +82,25 @@ public class GameActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO logic to move the player (remember to check collisions)
         switch (keyCode) {
-            case KeyEvent.KEYCODE_W:
+            case KeyEvent.KEYCODE_DPAD_UP:
                 // TODO IMPLEMENT UP MOVEMENT
-                Log.d("MOVEMENT", "Moving up...");
-                playerY += speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
-                return true;
-            case KeyEvent.KEYCODE_S:
-                // TODO IMPLEMENT DOWN MOVEMENT
                 playerY -= speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
+                playerView.updatePosition(playerX, playerY);
                 return true;
-            case KeyEvent.KEYCODE_D:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                // TODO IMPLEMENT DOWN MOVEMENT
+                playerY += speed;
+                playerView.updatePosition(playerX, playerY);
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
                 // TODO IMPLEMENT RIGHT MOVEMENT
                 playerX += speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
+                playerView.updatePosition(playerX, playerY);
                 return true;
-            case KeyEvent.KEYCODE_A:
+            case KeyEvent.KEYCODE_DPAD_LEFT:
                 // TODO IMPLEMENT LEFT MOVEMENT
                 playerX -= speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
+                playerView.updatePosition(playerX, playerY);
                 return true;
             default:
                 return super.onKeyDown(keyCode, event); // Just to be safe, though I'm not sure what this does.
@@ -111,12 +110,8 @@ public class GameActivity extends AppCompatActivity {
     private void initializeDots() {
         // TODO Create and add dots with random positions
         for (int i = 0; i < 20; i++) {
-            int x = random.nextInt();
-            int y = random.nextInt();
-            dots.add(new Dot(x, y, 50)); // radius is 5
+            respawnDot();
         }
-        dotCount = 20;
-        //int y = random.nextInt();
     }
 
     /*
@@ -124,6 +119,7 @@ public class GameActivity extends AppCompatActivity {
      */
     private void drawDots() {
         for (Dot dot : dots) {
+            //Log.d("DRAW", "Drawing dot at: ("+dot.getX()+", "+dot.getY()+")");
             DotView newDot = new DotView(this, dot);
             gameLayout.addView(newDot);
             dotViewMap.put(dot, newDot);
@@ -133,26 +129,25 @@ public class GameActivity extends AppCompatActivity {
     // Maintains 20 dots on screen
     private void respawnDotsIfNeeded() {
         // TODO: if dots drop below 20, respawn dots
-        if (dotCount < 20) {
-            while (dotCount < 20) {
-                int x = random.nextInt();
-                int y = random.nextInt();
-                dots.add(new Dot(x, y, 50)); // ditto
-                dotCount++;
-            }
+        if (dots.size() < 20) {
+            respawnDot();
         }
     }
 
     // Recreates the dots. Respawn mechanic
     private void respawnDot() {
         //TODO: randomly spawn a dot (need to make both UI and background class)
-        //Not sure what to do here.
+        float x = random.nextFloat() * screenWidth;
+        float y = random.nextFloat() * screenHeight;
+        dots.add(new Dot(x, y, 50)); // ditto
     }
 
     /*
     Method that checks to see if any collision has occurred.
      */
     private void checkCollisions() {
+        // Remember that respawnDotsIfNeeded() is automatically called after this.
+
         for (int i = 0; i < dots.size(); i++) {
             Dot dot = dots.get(i);
             if (dot.isVisible() && isCollision(playerView, dot)) {
@@ -166,7 +161,9 @@ public class GameActivity extends AppCompatActivity {
                     launchGameWinActivity();
                 }
             } else if (dot.isExpired()) { // TODO: Checks if dots have expired.
-                
+                dots.remove(dot); // Test to see if this works.
+                gameLayout.removeView(dotViewMap.get(dot));
+                dots.remove(i);
             }
         }
     }

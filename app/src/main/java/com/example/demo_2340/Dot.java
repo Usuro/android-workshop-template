@@ -23,7 +23,7 @@ public class Dot {
 
     public boolean isExpired() {
         // TODO Check if the dot has exceeded its max lifetime
-        return System.currentTimeMillis() == (visibleStartTime + MAX_LIFETIME); // Hotfix to see what the game looks like when run.
+        return System.currentTimeMillis() >= (visibleStartTime + MAX_LIFETIME); // Hotfix to see what the game looks like when run.
     }
 
     public float getX() {
