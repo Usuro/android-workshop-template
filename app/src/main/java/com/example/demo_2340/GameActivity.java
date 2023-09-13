@@ -84,39 +84,35 @@ public class GameActivity extends AppCompatActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_W:
                 // TODO IMPLEMENT UP MOVEMENT
-                Log.d("MOVEMENT", "Moving up...");
-                playerY += speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
-                return true;
+                playerY -= speed;
+                break;
             case KeyEvent.KEYCODE_S:
                 // TODO IMPLEMENT DOWN MOVEMENT
-                playerY -= speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
-                return true;
+                playerY += speed;
+                break;
             case KeyEvent.KEYCODE_D:
                 // TODO IMPLEMENT RIGHT MOVEMENT
                 playerX += speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
-                return true;
+                break;
             case KeyEvent.KEYCODE_A:
                 // TODO IMPLEMENT LEFT MOVEMENT
                 playerX -= speed;
-                playerView = new PlayerView(this, playerX, playerY, 100);
-                return true;
+                break;
             default:
                 return super.onKeyDown(keyCode, event); // Just to be safe, though I'm not sure what this does.
         }
+        playerView.updatePosition(playerX, playerY);
+        return true;
     }
 
     private void initializeDots() {
         // TODO Create and add dots with random positions
         for (int i = 0; i < 20; i++) {
-            int x = random.nextInt();
-            int y = random.nextInt();
-            dots.add(new Dot(x, y, 50)); // radius is 5
+            int x = random.nextInt(screenWidth - 2*50) + 50;  // Using 50 as the radius
+            int y = random.nextInt(screenHeight - 2*50) + 50;  // Using 50 as the radius
+            dots.add(new Dot(x, y, 50));
         }
         dotCount = 20;
-        //int y = random.nextInt();
     }
 
     /*
@@ -133,13 +129,9 @@ public class GameActivity extends AppCompatActivity {
     // Maintains 20 dots on screen
     private void respawnDotsIfNeeded() {
         // TODO: if dots drop below 20, respawn dots
-        if (dotCount < 20) {
-            while (dotCount < 20) {
-                int x = random.nextInt();
-                int y = random.nextInt();
-                dots.add(new Dot(x, y, 50)); // ditto
-                dotCount++;
-            }
+        while (dotCount < 20) {
+            respawnDot();
+            dotCount++;
         }
     }
 
@@ -147,6 +139,13 @@ public class GameActivity extends AppCompatActivity {
     private void respawnDot() {
         //TODO: randomly spawn a dot (need to make both UI and background class)
         //Not sure what to do here.
+        int x = random.nextInt(screenWidth - 2*50) + 50;  // Using 50 as the radius
+        int y = random.nextInt(screenHeight - 2*50) + 50;  // Using 50 as the radius
+        Dot newDot = new Dot(x, y, 50);
+        dots.add(newDot);
+        DotView newDotView = new DotView(this, newDot);
+        gameLayout.addView(newDotView);
+        dotViewMap.put(newDot, newDotView);
     }
 
     /*
@@ -160,13 +159,13 @@ public class GameActivity extends AppCompatActivity {
                 gameLayout.removeView(dotViewMap.get(dot));
                 dots.remove(i);
                 dotCount++;
-
                 dotCountTextView.setText("Dots Collected: " + dotCount);
                 if (dotCount >= dotsToWin) {
                     launchGameWinActivity();
                 }
             } else if (dot.isExpired()) { // TODO: Checks if dots have expired.
-                
+                gameLayout.removeView(dotViewMap.get(dot));
+                dots.remove(i);
             }
         }
     }
